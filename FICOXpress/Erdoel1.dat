@@ -1,0 +1,28 @@
+Euro_Dollar_Kurs: [0.9]
+
+Rohoel: ["Rohoel 1", "Rohoel 2", "Roheol 3"]
+
+Preis: [38, 0.19, 33]
+
+Waehrung: ["USD", "Euro", "Euro"]
+
+Volumen: ["Barrel", "Liter", "Barrel"]
+
+Verfuegbarkeit: [40000, 8745000, 50000]
+
+Endprodukt: ["Benzin", "Dieselkraftstoff", "Gasöl","Heizöl","Kat. Heizöl","Pitch"]
+
+Output: [0.20,	  0.25,	 0.15,
+	 0.35,	  0.20	 0.25,
+	 0.25,	  0.20	 0.35,
+	 0.15,	  0.20	 0.15,
+	 0.00,	  0.00	 0.00,
+	 0.05,	  0.15	 0.10]
+
+Verkaufspreis: [56 51 50 48 57 5]
+
+Preis_D: [0.70]
+
+Kapazitaet_Dest: [100000]
+
+Absatz: [10000]

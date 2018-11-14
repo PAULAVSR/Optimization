@@ -1,0 +1,87 @@
+model Aufgabe2b
+uses "mmxprs";
+
+parameters
+	a=3;
+	b=6;
+end-parameters
+	
+declarations
+	I=1..a;
+	J=1..b;
+	Euro_Dollar_Kurs: real;
+	Rohoel: array(I) of string;
+	Preis: array(I) of real;
+	Waehrung: array(I) of string;
+	Volumen: array(I) of string;
+	Verfuegbarkeit: array(I) of real;
+	Endprodukt: array(J) of string;
+	Output: array(J,I) of real;
+	Verkaufspreis: array(J) of integer;
+	Preis_D: real;
+	Kapazitaet_Dest: integer;
+	Absatz: integer;
+	!Menge der Destillate
+	x: array(J) of linctr;
+	!Entscheidungsvariable
+	!Rohoel
+	y: array(I) of mpvar;
+end-declarations
+
+initializations from "erdoel1.dat"
+	Euro_Dollar_Kurs;
+	Rohoel;
+	Preis;
+	Waehrung;
+	Volumen;
+	Verfuegbarkeit;
+	Endprodukt;
+	Output;
+	Verkaufspreis;
+	Preis_D;
+	Kapazitaet_Dest;
+	Absatz;
+end-initializations
+
+!Umformung
+Verfuegbarkeit(2):=Verfuegbarkeit(2)/159;
+Preis(1):=Preis(1)*Euro_Dollar_Kurs;
+Preis(2):=Preis(2)*159;
+
+!NEBENBEDINGUNGEN
+!Verfuegbarkeit
+forall(i in I)do
+	y(i)<=Verfuegbarkeit(i);
+end-do
+!Kapazität
+sum(i in I)y(i)<=Kapazitaet_Dest;
+!Menge der jeweiligen Destillate im x-Array speichern
+forall(j in J)do
+	x(j):=sum(i in I)(y(i)*Output(j,i));
+end-do
+!Absatzrestriktion
+x(6)<=Absatz;
+
+!ZIELFUNKTION
+Erloes:=sum(j in J)(x(j)*Verkaufspreis(j));
+Kosten:=y(1)*Preis(1)+y(2)*Preis(2)+y(3)*Preis(3)+(sum(i in I)y(i))*Preis_D;
+Gewinn:=Erloes-Kosten
+maximize(Gewinn);
+
+!AUSGABE
+!fopen("Aufgabe_2b.txt",F_OUTPUT)
+writeln("Zielfunktion: Maximiere G(x,y)= ",strfmt(Verkaufspreis(1),1),"*x(1)+ ",strfmt(Verkaufspreis(2),1),"*x(2)+ ",strfmt(Verkaufspreis(3),1),"*x(3)+ ",strfmt(Verkaufspreis(4),1),"*x(4)+ ",strfmt(Verkaufspreis(5),1),"*x(5)+ ",strfmt(Verkaufspreis(6),1),"*x(6) -(",strfmt(Preis(1),1),"*y(1)+ ",strfmt(Preis(2),1),"*y(2)+ ",strfmt(Preis(3),1),"*y(3)+ sum(i = 1,..,3)",strfmt(Preis_D,1),"*y(i))")
+writeln("unter Beachtung der Nebenbedingungen: ")
+writeln("y(1)<=",strfmt(Verfuegbarkeit(1),1))
+writeln("y(2)<=",strfmt(Verfuegbarkeit(2),1))
+writeln("y(3)<=",strfmt(Verfuegbarkeit(3),1))
+writeln("sum(i=1,..,3) y(i)<=",strfmt(Kapazitaet_Dest,1))
+writeln("")
+writeln("Bemerkung:")
+writeln("Die Variable x hängt von der Entscheidungsvariable y ab, da ihr der Wert x(j = 1,..,6)= sum(i=1,..,3)y(i)*Output(j,i)zugeordnet wird.")
+!fclose(F_OUTPUT)
+
+
+
+
+end-model	

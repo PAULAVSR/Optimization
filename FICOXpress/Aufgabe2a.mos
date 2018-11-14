@@ -1,0 +1,112 @@
+model Aufgabe2a
+uses "mmxprs";
+
+parameters
+	a=3;
+	b=6;
+end-parameters
+	
+declarations
+	I=1..a;
+	J=1..b;
+	Euro_Dollar_Kurs: real;
+	Rohoel: array(I) of string;
+	Preis: array(I) of real;
+	Waehrung: array(I) of string;
+	Volumen: array(I) of string;
+	Verfuegbarkeit: array(I) of real;
+	Endprodukt: array(J) of string;
+	Output: array(J,I) of real;
+	Verkaufspreis: array(J) of integer;
+	Preis_D: real;
+	Kapazitaet_Dest: integer;
+	Absatz: integer;
+	!Menge der Destillate
+	x: array(J) of linctr;
+	!Entscheidungsvariable
+	!Rohoel
+	y: array(I) of mpvar;
+end-declarations
+
+initializations from "erdoel1.dat"
+	Euro_Dollar_Kurs;
+	Rohoel;
+	Preis;
+	Waehrung;
+	Volumen;
+	Verfuegbarkeit;
+	Endprodukt;
+	Output;
+	Verkaufspreis;
+	Preis_D;
+	Kapazitaet_Dest;
+	Absatz;
+end-initializations
+
+!Umformung
+Verfuegbarkeit(2):=Verfuegbarkeit(2)/159;
+Preis(1):=Preis(1)*Euro_Dollar_Kurs;
+Preis(2):=Preis(2)*159;
+
+!NEBENBEDINGUNGEN
+!Verfuegbarkeit
+forall(i in I)do
+	y(i)<=Verfuegbarkeit(i);
+end-do
+!Kapazität
+sum(i in I)y(i)<=Kapazitaet_Dest;
+!Menge der jeweiligen Destillate im x-Array speichern
+forall(j in J)do
+	x(j):=sum(i in I)(y(i)*Output(j,i));
+end-do
+!Absatzrestriktion
+x(6)<=Absatz;
+
+!ZIELFUNKTION
+Erloes:=sum(j in J)(x(j)*Verkaufspreis(j));
+Kosten:=y(1)*Preis(1)+y(2)*Preis(2)+y(3)*Preis(3)+(sum(i in I)y(i))*Preis_D;
+Gewinn:=Erloes-Kosten
+maximize(Gewinn);
+
+!AUSGABE
+!fopen("Aufgabe_2a.txt",F_OUTPUT)
+writeln("Gewinn: ",strfmt(getsol(Gewinn),10,2)," GE")
+writeln("")
+writeln("Bestellte Mengen Rohöl:")
+writeln("")
+forall(i in I)do 
+	writeln(strfmt((Rohoel(i)),20),": ",strfmt(getsol(y(i)),10,2)," Barrel")
+end-do
+writeln("")
+writeln("Produzierte Mengen Destillate:")
+writeln("")
+forall(j in J)do 
+	writeln(strfmt((Endprodukt(j)),20),": ",strfmt(getsol(x(j)),10,2)," Barrel")
+end-do
+!Ausgabe Tabelle2
+writeln("")
+writeln("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+writeln("")
+write("Tabelle2:")
+writeln("")
+write(strfmt((""),20))
+forall(i in I)write(strfmt((Rohoel(i)),10))
+writeln("")
+writeln("")
+write(strfmt(("Preis"),20))
+forall(i in I)write(strfmt((Preis(i)),10))
+writeln("")
+write(strfmt(("Waehrung"),20))
+forall(i in I)write(strfmt((Waehrung(2)),10))
+writeln("")
+write(strfmt(("Volumen"),20))
+forall(i in I)write(strfmt(("Barrel"),10))
+writeln("")
+write(strfmt(("Verfuegbarkeit"),20))
+forall(i in I)write(strfmt((Verfuegbarkeit(i)),10))
+!fclose(F_OUTPUT)
+
+
+
+
+end-model	

@@ -1,0 +1,41 @@
+Gewinn: 1511879.70 GE
+
+Bestellte Mengen Rohöl:
+
+            Rohoel 1:   40000.00 Barrel
+            Rohoel 2:   23080.00 Barrel
+            Roheol 3:   36920.00 Barrel
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Verkaufte Mengen der Destillate:
+(Destillation+Cracken)
+
+              Benzin:   30960.50 Barrel
+    Dieselkraftstoff:   27846.00 Barrel
+               Gasöl:   10618.00 Barrel
+              Heizöl:       0.00 Barrel
+         Kat. Heizöl:   20575.50 Barrel
+               Pitch:   10000.00 Barrel
+
+Gecrackte Mengen Normal-Variante
+
+              Benzin:       0.00 Barrel
+    Dieselkraftstoff:       0.00 Barrel
+               Gasöl:   16920.00 Barrel
+              Heizöl:       0.00 Barrel
+         Kat. Heizöl:       0.00 Barrel
+               Pitch:       0.00 Barrel
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Eine Erweiterung der Anlage lohnt sich. Das Premiumpaket wird verwendet!
+
+Gecrackte Mengen der Premium-Variante:
+
+              Benzin:       0.00 Barrel
+    Dieselkraftstoff:       0.00 Barrel
+               Gasöl:       0.00 Barrel
+              Heizöl:   16154.00 Barrel
+         Kat. Heizöl:       0.00 Barrel
+               Pitch:       0.00 Barrel

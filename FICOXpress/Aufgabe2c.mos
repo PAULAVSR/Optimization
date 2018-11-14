@@ -1,0 +1,134 @@
+model Aufgabe 2c
+uses "mmxprs";
+
+parameters
+	_a=3;
+	_b=6;
+	_c=6;
+end-parameters
+	
+declarations
+	I=1.._a;
+	J=1.._b;
+	K=1.._c;
+	Euro_Dollar_Kurs: real;
+	Rohoel: array(I) of string;
+	Preis: array(I) of real;
+	Waehrung: array(I) of string;
+	Volumen: array(I) of string;
+	Verfuegbarkeit: array(I) of real;
+	Endprodukt: array(J) of string;
+	Output: array(J,I) of real;
+	Verkaufspreis: array(J) of integer;
+	Preis_D: real;
+	Kapazitaet_Dest: integer;
+	Absatz: integer;
+	!Menge der Destillate
+	x: array(J) of linctr;
+	!Rohoel
+	y: array(I) of mpvar;
+	!c)
+	Preis_C: real;
+	Crack_Output: array(K,J) of real;
+	Kapazitaet_Crack: integer;
+	!Menge der Destillate die bei Cracken entstanden sind
+	c: array(J) of linctr;
+	!Menge der Destillate die fürs Cracken verwendet wurden
+	z: array(K) of mpvar;
+	!Menge der Destillate aus der Destillation + Menge der Destillate vom Cracken
+	cx: array(J) of linctr;
+end-declarations
+
+initializations from "erdoel1.dat"
+	Euro_Dollar_Kurs;
+	Rohoel;
+	Preis;
+	Waehrung;
+	Volumen;
+	Verfuegbarkeit;
+	Endprodukt;
+	Output;
+	Verkaufspreis;
+	Preis_D;
+	Kapazitaet_Dest;
+	Absatz;
+end-initializations
+
+!c)
+initializations from "erdoel2.dat"
+	Preis_C;
+	Crack_Output;
+	Kapazitaet_Crack;
+end-initializations
+
+!Umformung
+Verfuegbarkeit(2):=Verfuegbarkeit(2)/159;
+Preis(1):=Preis(1)*Euro_Dollar_Kurs;
+Preis(2):=Preis(2)*159;
+
+!NEBENBEDINGUNGEN
+!Verfuegbarkeit
+forall(i in I)do
+	y(i)<=Verfuegbarkeit(i);
+end-do
+!Kapazität Destillation
+sum(i in I)y(i)<=Kapazitaet_Dest;
+!Menge der jeweiligen Destillate aus der Destillation
+forall(j in J)do
+	x(j):=sum(i in I)(y(i)*Output(j,i))-z(j);
+end-do
+!c)Cracken
+forall(j in J)do
+	c(j):=sum(k in K)(z(k)*Crack_Output(k,j));
+end-do
+!Kapazität Cracken
+z(1)+z(2)+4*z(3)+3*z(4)+z(5)+z(6)<=Kapazitaet_Crack;
+!Es kann nicht mehr gecrackt werden, als destilliert wurde
+forall(j in J)do
+	x(j)>=0;
+end-do
+!Absatzrestriktion
+x(6)+c(6)<=Absatz;
+!Destillate vom Cracken und der Destillation
+forall(j in J)do
+	cx(j):=c(j)+x(j);
+end-do
+
+!ZIELFUNKTION
+Erloes:=sum(j in J)(cx(j)*Verkaufspreis(j));
+Kosten:=y(1)*Preis(1)+y(2)*Preis(2)+y(3)*Preis(3)+(sum(i in I)y(i))*Preis_D+(sum(k in K)z(k))*Preis_C;
+Gewinn:=Erloes-Kosten
+maximize(Gewinn);
+
+!AUSGABE
+!fopen("Aufgabe_2c.txt",F_OUTPUT)
+writeln("Gewinn: ",strfmt(getsol(Gewinn),10,2)," GE")
+writeln("")
+writeln("Bestellte Mengen Rohöl:")
+writeln("")
+forall(i in I)do 
+	writeln(strfmt((Rohoel(i)),20),": ",strfmt(getsol(y(i)),10,2)," Barrel")
+end-do
+writeln("")
+writeln("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+writeln("")
+writeln("Verkaufte Mengen der Destillate:")
+writeln("(Destillation+Cracken)")
+writeln("")
+forall(j in J)do 
+	writeln(strfmt((Endprodukt(j)),20),": ",strfmt(getsol(cx(j)),10,2)," Barrel")
+end-do
+writeln("")
+writeln("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+writeln("")
+writeln("Gecrackte Mengen der Destillate:")
+writeln("(Destillation+Cracken)")
+writeln("")
+forall(j in J)do 
+	writeln(strfmt((Endprodukt(j)),20),": ",strfmt(getsol(z(j)),10,2)," Barrel")
+end-do
+!fclose(F_OUTPUT)
+
+
+
+end-model	
